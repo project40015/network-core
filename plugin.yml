@@ -1,0 +1,15 @@
+name: DecimateNetworkCore
+version: 1.0
+author: _Ug
+description: Decimate network core data handler
+main: decimatenetworkcore.core.DecimateNetworkCore
+commands:
+  ban:
+    description: Ban a player from the network
+  mute:
+    description: Mute a player on the network
+  unban:
+    description: Unban a player from the network
+    aliases: [pardon]
+  unmute:
+    description: Unmute a player on the network
