@@ -32,6 +32,7 @@ public class DecimateNetworkCore extends JavaPlugin {
 		this.getCommand("unban").setExecutor(punishmentManager);
 		this.getCommand("mute").setExecutor(punishmentManager);
 		this.getCommand("unmute").setExecutor(punishmentManager);
+		this.getCommand("pinfo").setExecutor(punishmentManager);
 	}
 	
 	public Connection getConnection() {

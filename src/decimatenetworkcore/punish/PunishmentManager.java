@@ -84,7 +84,7 @@ public class PunishmentManager implements Listener, CommandExecutor {
 	public void onPunish(UserPunishmentEvent event){
 		// Changed the apply and expiration as servers have different system times.
 		Punishment punishment = new Punishment(event.getId(), PunishmentType.valueOf(event.getType()), event.getReason(), System.currentTimeMillis(),
-				event.getExpiration() - event.getApplied(), event.getPunisherUUID(), event.getPunishedUUID(), false);
+				System.currentTimeMillis() + event.getExpiration() - event.getApplied(), event.getPunisherUUID(), event.getPunishedUUID(), false);
 		this.punishments.add(punishment);
 		DataUser du = DecimateNetworkCore.getInstance().getDataUserManager().getDataUser(punishment.getPunishedUUID());
 		if(du != null){
@@ -140,11 +140,40 @@ public class PunishmentManager implements Listener, CommandExecutor {
 			Player player = (Player) sender;
 			
 			// /mute _Ug 14d fly hacking
-			if(command.getName().equalsIgnoreCase("mute")){
+			if(command.getName().equalsIgnoreCase("pinfo")){
+				if(!player.hasPermission("Decimate.punishment.info")){
+					player.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+					return false;
+				}
+				if(args.length >= 1){
+					try{
+						int n = Integer.parseInt(args[0]);
+						if(n >= 0){
+							if(this.punishments.size() > n){
+								Punishment punishment = this.punishments.get(n);
+								player.sendMessage(ChatColor.GRAY + "Punishment ID: " + ChatColor.YELLOW + "#" + n);
+								player.sendMessage(ChatColor.GRAY + "Type: " + ChatColor.YELLOW + punishment.getType().toString());
+								player.sendMessage(ChatColor.GRAY + "Reason: " + ChatColor.YELLOW + punishment.getReason());
+								player.sendMessage(ChatColor.GRAY + "Length: " + ChatColor.YELLOW + punishment.getTotalTimeString());
+								player.sendMessage(ChatColor.GRAY + "Time Remaining: " + ChatColor.YELLOW + punishment.getRemainingTimeString());
+								player.sendMessage(ChatColor.GRAY + "Punished Player: " + ChatColor.YELLOW + punishment.getPunishedUUID());
+								player.sendMessage(ChatColor.GRAY + "Staff: " + ChatColor.YELLOW + punishment.getPunisherUUID());
+								player.sendMessage(ChatColor.GRAY + "Reverted: " + ChatColor.YELLOW + punishment.isReverted());
+							}else{
+								player.sendMessage(ChatColor.RED + "No such punishment exists.");
+							}
+						}else{
+							player.sendMessage(ChatColor.RED + "Invalid number.");
+						}
+					}catch(Exception ex){
+						player.sendMessage(ChatColor.RED + "Invalid number.");
+					}
+				}
+			}else if(command.getName().equalsIgnoreCase("mute")){
 				if(player.hasPermission("Decimatepvp.mute.apply")){
 					if(args.length >= 3){
 						OfflinePlayer offp = Bukkit.getServer().getOfflinePlayer(args[0]);
-						if(offp.hasPlayedBefore()){
+						if(offp.hasPlayedBefore() || offp.isOnline()){
 							long l = getTimeFromMicroString(args[1]);
 							if(l != -2){
 								String reason = concatStrings(args, 2);
@@ -171,7 +200,7 @@ public class PunishmentManager implements Listener, CommandExecutor {
 				if(player.hasPermission("Decimatepvp.ban.apply")){
 					if(args.length >= 3){
 						OfflinePlayer offp = Bukkit.getServer().getOfflinePlayer(args[0]);
-						if(offp.hasPlayedBefore()){
+						if(offp.hasPlayedBefore() || offp.isOnline()){
 							long l = getTimeFromMicroString(args[1]);
 							if(l != -2){
 								String reason = concatStrings(args, 2);

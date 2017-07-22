@@ -13,3 +13,5 @@ commands:
     aliases: [pardon]
   unmute:
     description: Unmute a player on the network
+  pinfo:
+    description: View punishment information

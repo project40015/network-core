@@ -66,13 +66,17 @@ public class Punishment {
 	}
 	
 	public String getRemainingTimeString(){
-		if(!isActive()){
+		return getTimeString(System.currentTimeMillis(), true);
+	}
+	
+	private String getTimeString(long n, boolean activeCare){
+		if(!isActive() && activeCare){
 			return "EXPIRED";
 		}
 		if(expiration == -1){
 			return "forever";
 		}
-		long time = expiration - System.currentTimeMillis();
+		long time = expiration - n;
 
 		int seconds = (int) ((time / 1000) % 60);
 		int minutes = (int) ((time / (1000 * 60)) % 60);
@@ -80,6 +84,10 @@ public class Punishment {
 		int days = (int) ((time / (1000 * 60 * 60 * 24)));
 
 		return (days != 0 ? days + "d " : "") + (hours != 0 ? hours + "h " : "") + (minutes != 0 ? minutes + "m " : "") + (seconds != 0 ? seconds + "s" : "");
+	}
+	
+	public String getTotalTimeString(){
+		return getTimeString(applied, false);
 	}
 	
 }
