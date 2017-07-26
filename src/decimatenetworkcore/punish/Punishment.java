@@ -23,10 +23,13 @@ public class Punishment {
 	}
 	
 	public boolean isActive(){
-		if(!reverted && expiration == -1){
+		if(reverted){
+			return false;
+		}
+		if(expiration == -1){
 			return true;
 		}
-		return !reverted && expiration > System.currentTimeMillis();
+		return expiration > System.currentTimeMillis();
 	}
 	
 	public int getId(){

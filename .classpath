@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="src" path="/paperspigot-parent"/>
-	<classpathentry kind="lib" path="/Users/liamlutton/Desktop/hcf/WarSocket/target/WarSocket-0.0.1-SNAPSHOT-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="/Users/Liam/Desktop/f_dev/jars/WarSocket-0.0.1-SNAPSHOT-jar-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="/Users/Liam/Desktop/f_dev/jars/PaperSpigot-1.8.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

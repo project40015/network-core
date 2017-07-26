@@ -52,9 +52,6 @@ public class PunishmentManager implements Listener, CommandExecutor {
 	}
 	
 	public Punishment getPunishment(int id){
-		System.out.println("");
-		System.out.println(id + "");
-		System.out.println("");
 		return this.punishments.get(id);
 	}
 	
@@ -84,7 +81,7 @@ public class PunishmentManager implements Listener, CommandExecutor {
 	public void onPunish(UserPunishmentEvent event){
 		// Changed the apply and expiration as servers have different system times.
 		Punishment punishment = new Punishment(event.getId(), PunishmentType.valueOf(event.getType()), event.getReason(), System.currentTimeMillis(),
-				System.currentTimeMillis() + event.getExpiration() - event.getApplied(), event.getPunisherUUID(), event.getPunishedUUID(), false);
+				event.getExpiration() == -1 ? -1 : System.currentTimeMillis() + event.getExpiration() - event.getApplied(), event.getPunisherUUID(), event.getPunishedUUID(), false);
 		this.punishments.add(punishment);
 		DataUser du = DecimateNetworkCore.getInstance().getDataUserManager().getDataUser(punishment.getPunishedUUID());
 		if(du != null){
@@ -136,8 +133,9 @@ public class PunishmentManager implements Listener, CommandExecutor {
 	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if(sender instanceof Player){
-			Player player = (Player) sender;
+//		if(sender instanceof Player){
+//			Player player = (Player) sender;
+		CommandSender player = sender;
 			
 			// /mute _Ug 14d fly hacking
 			if(command.getName().equalsIgnoreCase("pinfo")){
@@ -173,11 +171,18 @@ public class PunishmentManager implements Listener, CommandExecutor {
 				if(player.hasPermission("Decimatepvp.mute.apply")){
 					if(args.length >= 3){
 						OfflinePlayer offp = Bukkit.getServer().getOfflinePlayer(args[0]);
+						if(offp.isOp()){
+							player.sendMessage(ChatColor.RED + "You may not mute this player.");
+							if(offp.isOnline()){
+								offp.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "WARNING " + ChatColor.GRAY + player.getName() + " tried to mute you.");
+							}
+							return false;
+						}
 						if(offp.hasPlayedBefore() || offp.isOnline()){
 							long l = getTimeFromMicroString(args[1]);
 							if(l != -2){
 								String reason = concatStrings(args, 2);
-								this.punish(PunishmentType.MUTE, reason, l == -1 ? -1 : System.currentTimeMillis() + l, player.getUniqueId().toString(), offp.getUniqueId().toString());
+								this.punish(PunishmentType.MUTE, reason, l == -1 ? -1 : System.currentTimeMillis() + l, sender instanceof Player ? ((Player)sender).getUniqueId().toString() : "CONSOLE", offp.getUniqueId().toString());
 								player.sendMessage(ChatColor.GREEN + "Successfully muted " + offp.getName() + "!");
 								Bukkit.broadcastMessage("");
 								Bukkit.broadcastMessage(ChatColor.RED + offp.getName() + ChatColor.GRAY + " was muted by " + ChatColor.RED + player.getName() + ChatColor.GRAY + " for " +
@@ -200,11 +205,18 @@ public class PunishmentManager implements Listener, CommandExecutor {
 				if(player.hasPermission("Decimatepvp.ban.apply")){
 					if(args.length >= 3){
 						OfflinePlayer offp = Bukkit.getServer().getOfflinePlayer(args[0]);
+						if(offp.isOp()){
+							player.sendMessage(ChatColor.RED + "You may not ban this player.");
+							if(offp.isOnline()){
+								offp.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "WARNING " + ChatColor.GRAY + player.getName() + " tried to ban you.");
+							}
+							return false;
+						}
 						if(offp.hasPlayedBefore() || offp.isOnline()){
 							long l = getTimeFromMicroString(args[1]);
 							if(l != -2){
 								String reason = concatStrings(args, 2);
-								this.punish(PunishmentType.BAN, reason, l == -1 ? -1 : System.currentTimeMillis() + l, player.getUniqueId().toString(), offp.getUniqueId().toString());
+								this.punish(PunishmentType.BAN, reason, l == -1 ? -1 : System.currentTimeMillis() + l, sender instanceof Player ? ((Player)sender).getUniqueId().toString() : "CONSOLE", offp.getUniqueId().toString());
 								player.sendMessage(ChatColor.GREEN + "Successfully banned " + offp.getName() + "!");
 								Bukkit.broadcastMessage("");
 								Bukkit.broadcastMessage(ChatColor.RED + offp.getName() + ChatColor.GRAY + " was banned by " + ChatColor.RED + player.getName() + ChatColor.GRAY + " for " +
@@ -227,7 +239,7 @@ public class PunishmentManager implements Listener, CommandExecutor {
 				if(player.hasPermission("Decimatepvp.mute.pardon")){
 					if(args.length >= 1){
 						OfflinePlayer offp = Bukkit.getServer().getOfflinePlayer(args[0]);
-						if(offp.hasPlayedBefore()){
+						if(offp.hasPlayedBefore() || offp.isOnline()){
 							this.revert(PunishmentType.MUTE, offp.getUniqueId().toString());
 							player.sendMessage(ChatColor.GREEN + "Sucessfully lifted " + offp.getName() + "'s mutes.");
 						}else{
@@ -257,7 +269,7 @@ public class PunishmentManager implements Listener, CommandExecutor {
 					player.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
 				}
 			}
-		}
+//		}
 		return false;
 	}
 	
