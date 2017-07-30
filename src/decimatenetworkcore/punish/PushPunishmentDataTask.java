@@ -28,7 +28,7 @@ public class PushPunishmentDataTask extends BukkitRunnable {
 			s.setBoolean(7, punishment.isReverted());
 			s.executeUpdate();
 			s.close();
-			
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

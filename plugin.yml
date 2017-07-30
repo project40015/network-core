@@ -15,3 +15,5 @@ commands:
     description: Unmute a player on the network
   pinfo:
     description: View punishment information
+  history:
+    description: View a player's punishments
