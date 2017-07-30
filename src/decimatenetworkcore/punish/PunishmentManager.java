@@ -104,19 +104,19 @@ public class PunishmentManager implements Listener, CommandExecutor {
 				return 0;
 			}
 			if(m == 'w' || m == 'W'){
-				return n*1000*60*60*24*7;
+				return (long) n*1000*60*60*24*7;
 			}
 			if(m == 'd' || m == 'D'){
-				return n*1000*60*60*24;
+				return (long) n*1000*60*60*24;
 			}
 			if(m == 'h' || m == 'H'){
-				return n*1000*60*60;
+				return (long) n*1000*60*60;
 			}
 			if(m == 'm' || m == 'M'){
-				return n*1000*60;
+				return (long) n*1000*60;
 			}
 			if(m == 's' || m == 'S'){
-				return n*1000;
+				return (long) n*1000;
 			}
 		}catch(Exception ex){ }
 		return -2;
@@ -149,6 +149,20 @@ public class PunishmentManager implements Listener, CommandExecutor {
 						if(n >= 0){
 							if(this.punishments.size() > n){
 								Punishment punishment = this.punishments.get(n);
+								if(punishment.getId() != n){
+									boolean nu = true;
+									for(Punishment p : this.punishments){
+										if(p.getId() == n){
+											punishment = p;
+											nu = false;
+											break;
+										}
+									}
+									if(nu){
+										player.sendMessage(ChatColor.RED + "No such punishment exists.");
+										return false;
+									}
+								}
 								player.sendMessage(ChatColor.GRAY + "Punishment ID: " + ChatColor.YELLOW + "#" + n);
 								player.sendMessage(ChatColor.GRAY + "Type: " + ChatColor.YELLOW + punishment.getType().toString());
 								player.sendMessage(ChatColor.GRAY + "Reason: " + ChatColor.YELLOW + punishment.getReason());

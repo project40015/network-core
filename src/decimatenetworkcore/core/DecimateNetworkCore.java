@@ -33,6 +33,17 @@ public class DecimateNetworkCore extends JavaPlugin {
 		this.getCommand("mute").setExecutor(punishmentManager);
 		this.getCommand("unmute").setExecutor(punishmentManager);
 		this.getCommand("pinfo").setExecutor(punishmentManager);
+		
+		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(instance, new Runnable(){
+
+			@SuppressWarnings("deprecation")
+			@Override
+			public void run() {
+				System.out.println("Pinging database...");
+				Bukkit.getServer().getScheduler().runTaskAsynchronously(instance, new PingDatabaseTask());
+			}
+			
+		}, 20*60*30, 20*60*30);
 	}
 	
 	public Connection getConnection() {
