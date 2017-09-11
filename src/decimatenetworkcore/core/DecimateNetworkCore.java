@@ -34,6 +34,8 @@ public class DecimateNetworkCore extends JavaPlugin {
 		this.getCommand("unmute").setExecutor(punishmentManager);
 		this.getCommand("pinfo").setExecutor(punishmentManager);
 		this.getCommand("history").setExecutor(punishmentManager);
+		this.getCommand("blacklist").setExecutor(punishmentManager);
+		this.getCommand("graylist").setExecutor(punishmentManager);
 
 		Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(instance, new Runnable() {
 

@@ -44,8 +44,8 @@ public class DataUserManager implements Listener {
 					.sendMessage(ChatColor.RED + "You are currently muted for " + ChatColor.YELLOW
 							+ punishment.getRemainingTimeString() + ChatColor.RED + " for " + ChatColor.YELLOW
 							+ punishment.getReason() + ChatColor.RED + "! If you believe this to be a mistake,"
-							+ " please appeal here: " + ChatColor.YELLOW.toString() + ChatColor.UNDERLINE
-							+ "http://decimatepvp.com/forums/forums/ban-appeals.13/" + ChatColor.RED
+							+ " please appeal here: " + ChatColor.YELLOW.toString()
+							+ "http://tinyurl.com/dappeal" + ChatColor.RED
 							+ ". Punishment ID: " + ChatColor.YELLOW + "#" + punishment.getId());
 			event.setCancelled(true);
 		}
@@ -54,16 +54,25 @@ public class DataUserManager implements Listener {
 	@EventHandler
 	public void onJoin(AsyncPlayerPreLoginEvent event) {
 		for (Punishment punishment : DecimateNetworkCore.getInstance().getPunishmentManager()
-				.getPunishments(event.getUniqueId().toString())) {
+				.getPunishments(event.getUniqueId().toString(), event.getAddress().getHostAddress())) {
 			if (punishment.isActive() && punishment.getType().equals(PunishmentType.BAN)) {
 				event.disallow(Result.KICK_BANNED,
 						ChatColor.RED + "You are banned for " + punishment.getReason() + "!\n Expires: "
 								+ ChatColor.YELLOW + punishment.getRemainingTimeString() + "\n" + ChatColor.RED
 								+ "Appeal: " + ChatColor.YELLOW.toString() + ChatColor.UNDERLINE
-								+ "http://decimatepvp.com/forums/forums/ban-appeals.13/");
+								+ "http://tinyurl.com/dappeal");
+				break;
+			}
+			if (punishment.isActive() && punishment.getType().equals(PunishmentType.IPBAN)) {
+				event.disallow(Result.KICK_BANNED,
+						ChatColor.RED + "You are " + ChatColor.DARK_GRAY + "blacklisted" + ChatColor.RED + " for " + punishment.getReason()
+						+ "\n"
+						+ ChatColor.RED + "Appeal: " + ChatColor.YELLOW.toString() + ChatColor.UNDERLINE
+						+ "http://tinyurl.com/dappeal");
+				break;
 			}
 		}
-	}
+ 	}
 
 	public DataUser getDataUser(String uuid) {
 		for (DataUser user : users) {

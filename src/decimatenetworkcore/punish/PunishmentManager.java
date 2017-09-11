@@ -43,6 +43,16 @@ public class PunishmentManager implements Listener, CommandExecutor {
 		}
 		return result;
 	}
+	
+	public List<Punishment> getPunishments(String uuid, String address) {
+		List<Punishment> result = new ArrayList<Punishment>();
+		for (Punishment punishment : punishments) {
+			if (punishment.getPunishedUUID().equals(uuid) || punishment.getPunishedUUID().equals(address)) {
+				result.add(punishment);
+			}
+		}
+		return result;
+	}
 
 	public void loadPunishment(Punishment punishment) {
 		this.punishments.add(punishment);
@@ -65,15 +75,18 @@ public class PunishmentManager implements Listener, CommandExecutor {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void revert(PunishmentType type, String uuid) {
+	public boolean revert(PunishmentType type, String uuid) {
+		boolean found = false;
 		for (Punishment punishment : this.getPunishments(uuid)) {
 			if (punishment.isActive() && punishment.getType().equals(type)) {
 				punishment.revert();
 				Bukkit.getServer().getScheduler().runTaskAsynchronously(DecimateNetworkCore.getInstance(),
 						new PushPunishmentDataTask(punishment));
 				WarSocket.getInstance().emitUserRevertPunishment(punishment.getId());
+				found = true;
 			}
 		}
+		return found;
 	}
 
 	@EventHandler
@@ -319,6 +332,39 @@ public class PunishmentManager implements Listener, CommandExecutor {
 			} else {
 				player.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
 			}
+		}else if (command.getName().equalsIgnoreCase("blacklist")) {
+			if (player.hasPermission("Decimatepvp.blacklist.apply")) {
+				if (args.length >= 2) {
+					OfflinePlayer offp = Bukkit.getServer().getOfflinePlayer(args[0]);
+					if (offp.isOp()) {
+						player.sendMessage(ChatColor.RED + "You may not blacklist this player.");
+						if (offp.isOnline()) {
+							offp.getPlayer().sendMessage(ChatColor.RED.toString() + ChatColor.BOLD + "WARNING "
+									+ ChatColor.GRAY + player.getName() + " tried to ban you.");
+						}
+						return false;
+					}
+					if (offp.isOnline()) {
+						String reason = concatStrings(args, 1);
+						this.punish(PunishmentType.IPBAN, reason, -1,
+								sender instanceof Player ? ((Player) sender).getUniqueId().toString() : "CONSOLE",
+								offp.getPlayer().getAddress().getAddress().getHostAddress());
+						player.sendMessage(ChatColor.GREEN + "Successfully blacklisted " + offp.getName() + "!");
+						Bukkit.broadcastMessage("");
+						Bukkit.broadcastMessage(
+								ChatColor.DARK_GRAY + offp.getName() + ChatColor.GRAY + " was blacklisted by " + ChatColor.DARK_GRAY
+										+ player.getName() + ChatColor.GRAY + " for " + ChatColor.DARK_GRAY + reason + ChatColor.GRAY + "!");
+						Bukkit.broadcastMessage("");
+					} else {
+						player.sendMessage(ChatColor.RED + "This player is not online.");
+					}
+				} else {
+					player.sendMessage(ChatColor.RED + "Invalid syntax. Try: " + ChatColor.YELLOW
+							+ "/blacklist (player) (reason)");
+				}
+			} else {
+				player.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+			}
 		} else if (command.getName().equalsIgnoreCase("unmute")) {
 			if (player.hasPermission("Decimatepvp.mute.pardon")) {
 				if (args.length >= 1) {
@@ -347,6 +393,20 @@ public class PunishmentManager implements Listener, CommandExecutor {
 					}
 				} else {
 					player.sendMessage(ChatColor.RED + "Invalid syntax. Try: " + ChatColor.YELLOW + "/unban (player)");
+				}
+			} else {
+				player.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+			}
+		} else if (command.getName().equalsIgnoreCase("graylist")) {
+			if (player.hasPermission("Decimatepvp.graylist")) {
+				if (args.length >= 1) {
+					if(this.revert(PunishmentType.IPBAN, args[0])){
+						player.sendMessage(ChatColor.GREEN + "Graylisted the IP " + args[0]);
+					}else{
+						player.sendMessage(ChatColor.RED + "The IP: " + ChatColor.YELLOW + args[0] + ChatColor.RED + " either does not exist or is not blacklisted.");
+					}
+				} else {
+					player.sendMessage(ChatColor.RED + "Invalid syntax. Try: " + ChatColor.YELLOW + "/graylist (ip)");
 				}
 			} else {
 				player.sendMessage(ChatColor.RED + "You do not have permission to use this command.");

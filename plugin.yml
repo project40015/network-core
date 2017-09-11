@@ -17,3 +17,7 @@ commands:
     description: View punishment information
   history:
     description: View a player's punishments
+  blacklist:
+    description: Blacklist a player
+  graylist:
+    description: Revoke a blacklist on a player
