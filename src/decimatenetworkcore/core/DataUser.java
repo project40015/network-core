@@ -30,10 +30,13 @@ public class DataUser {
 	private String fac1_rank;
 	private String first_join_ip;
 	
+	private long start;
+	
 	private List<Punishment> punishments = new ArrayList<>();
 
 	public DataUser(String uuid) {
 		this.uuid = uuid;
+		start = System.currentTimeMillis();
 		loadPunishments();
 	}
 
@@ -121,7 +124,7 @@ public class DataUser {
 	}
 	
 	public long getPlaytime(){
-		return playtime;
+		return playtime + (System.currentTimeMillis() - start);
 	}
 	
 	public void setPlaytime(long playtime){

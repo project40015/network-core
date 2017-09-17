@@ -18,6 +18,11 @@ public class DecimateNetworkCore extends JavaPlugin {
 	private DataUserManager dataUserManager;
 
 	@Override
+	public void onDisable(){
+		this.dataUserManager.pushAll();
+	}
+	
+	@Override
 	public void onEnable() {
 		instance = this;
 

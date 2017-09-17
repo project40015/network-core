@@ -11,7 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import decimatenetworkcore.punish.Punishment;
@@ -25,14 +25,46 @@ public class DataUserManager implements Listener {
 		loadOnline();
 	}
 
-	@EventHandler
-	public void onJoin(PlayerJoinEvent event) {
-		this.users.add(new DataUser(event.getPlayer().getUniqueId().toString()));
+//	@EventHandler
+//	public void onJoin(PlayerJoinEvent event) {
+//		DataUser du = this.getDataUser(event.getPlayer().getUniqueId().toString());
+//		if(du != null){
+//			du.setName(event.getPlayer().getName());
+//		}
+//	}
+	
+	@SuppressWarnings("deprecation")
+	public void pushAll(){
+		for(DataUser du : users){
+			Bukkit.getScheduler().runTaskAsynchronously(DecimateNetworkCore.getInstance(), new PushDataUserTask(du));
+		}
+	}
+	
+	public void addDataUser(DataUser user){
+		users.add(user);
 	}
 
+	@SuppressWarnings("deprecation")
+	public void setRank(String uuid, String rank){
+		Bukkit.getScheduler().runTaskAsynchronously(DecimateNetworkCore.getInstance(), new PushDataUserTask(uuid, rank));
+	}
+	
+	@SuppressWarnings("deprecation")
 	@EventHandler
 	public void onLeave(PlayerQuitEvent event) {
-		this.users.remove(getDataUser(event.getPlayer().getUniqueId().toString()));
+		DataUser du = getDataUser(event.getPlayer().getUniqueId().toString());
+		if(du != null){
+			Bukkit.getScheduler().runTaskAsynchronously(DecimateNetworkCore.getInstance(), new PushDataUserTask(du));
+			this.users.remove(du);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void syncUser(String uuid, String server){
+		DataUser du = getDataUser(uuid);
+		if(du != null){
+			Bukkit.getScheduler().runTaskAsynchronously(DecimateNetworkCore.getInstance(), new PushDataUserTask(du, server));
+		}
 	}
 
 	@EventHandler
@@ -51,6 +83,14 @@ public class DataUserManager implements Listener {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
+	@EventHandler
+	public void onLogin(PlayerLoginEvent event){
+		if(event.getResult().equals(PlayerLoginEvent.Result.ALLOWED)){
+			Bukkit.getScheduler().runTaskAsynchronously(DecimateNetworkCore.getInstance(), new LoadDataUserTask(event.getPlayer().getName(), event.getPlayer().getUniqueId().toString(), event.getHostname()));
+		}
+	}
+	
 	@EventHandler
 	public void onJoin(AsyncPlayerPreLoginEvent event) {
 		for (Punishment punishment : DecimateNetworkCore.getInstance().getPunishmentManager()
@@ -61,7 +101,7 @@ public class DataUserManager implements Listener {
 								+ ChatColor.YELLOW + punishment.getRemainingTimeString() + "\n" + ChatColor.RED
 								+ "Appeal: " + ChatColor.YELLOW.toString() + ChatColor.UNDERLINE
 								+ "http://tinyurl.com/dappeal");
-				break;
+				return;
 			}
 			if (punishment.isActive() && punishment.getType().equals(PunishmentType.IPBAN)) {
 				event.disallow(Result.KICK_BANNED,
@@ -69,7 +109,7 @@ public class DataUserManager implements Listener {
 						+ "\n"
 						+ ChatColor.RED + "Appeal: " + ChatColor.YELLOW.toString() + ChatColor.UNDERLINE
 						+ "http://tinyurl.com/dappeal");
-				break;
+				return;
 			}
 		}
  	}
