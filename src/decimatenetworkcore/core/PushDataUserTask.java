@@ -41,8 +41,8 @@ public class PushDataUserTask extends BukkitRunnable {
 				return;
 			}
 			PreparedStatement s = DecimateNetworkCore.getInstance().getConnection().prepareStatement(
-					"UPDATE `DataUser` SET `name` = ?, `last_joined` = ?, `playtime` = ?, `total_donations` = ?, `mobs_killed` = ?, `blocks_broken` = ?, `blocks_placed` = ?, `players_killed` = ?, `deaths` = ?, `fac1_active_trail` = ?, `fac1_rank` = ? WHERE `uuid` = ?");
-			s.setString(12, user.getUUID());
+					"UPDATE `DataUser` SET `name` = ?, `last_joined` = ?, `playtime` = ?, `total_donations` = ?, `mobs_killed` = ?, `blocks_broken` = ?, `blocks_placed` = ?, `players_killed` = ?, `deaths` = ?, `fac1_active_trail` = ?, `fac1_tnt_bank` = ?, `fac1_rank` = ? WHERE `uuid` = ?");
+			s.setString(13, user.getUUID());
 			s.setString(1, user.getName());
 			s.setDate(2, new Date(System.currentTimeMillis()));
 			s.setLong(3, user.getPlaytime());
@@ -53,7 +53,8 @@ public class PushDataUserTask extends BukkitRunnable {
 			s.setInt(8, user.getPlayersKilled());
 			s.setInt(9, user.getDeaths());
 			s.setString(10, user.getFac1ActiveTrail());
-			s.setString(11, user.getFac1Rank());
+			s.setInt(11, user.getFac1TNT());
+			s.setString(12, user.getFac1Rank());
 			s.execute();
 			if(!this.server.equals("none")){
 				Bukkit.getServer().getPluginManager().callEvent(new DataSyncEvent(user.getUUID(), server));

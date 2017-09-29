@@ -37,6 +37,7 @@ public class LoadDataUserTask extends BukkitRunnable {
 				dataUser.setPlayersKilled(resultSet.getInt("players_killed"));
 				dataUser.setDeaths(resultSet.getInt("deaths"));
 				dataUser.setFac1ActiveTrail(resultSet.getString("fac1_active_trail"));
+				dataUser.setFac1TNT(resultSet.getInt("fac1_tnt_bank"));
 				dataUser.setFac1Rank(resultSet.getString("fac1_rank"));
 				dataUser.setFirstJoinIP(resultSet.getString("first_join_ip"));
 				DecimateNetworkCore.getInstance().getDataUserManager().addDataUser(dataUser);
@@ -54,10 +55,11 @@ public class LoadDataUserTask extends BukkitRunnable {
 				dataUser.setDeaths(0);
 				dataUser.setFac1ActiveTrail("");
 				dataUser.setFac1Rank("DEFAULT");
+				dataUser.setFac1TNT(0);
 				dataUser.setFirstJoinIP(ip);
 				DecimateNetworkCore.getInstance().getDataUserManager().addDataUser(dataUser);
 				PreparedStatement ps = DecimateNetworkCore.getInstance().getConnection().prepareStatement(
-						"INSERT INTO `DataUser` (`name`, `uuid`, `first_joined`, `last_joined`, `playtime`, `total_donations`, `mobs_killed`, `blocks_broken`, `blocks_placed`, `players_killed`, `deaths`, `fac1_active_trail`, `fac1_rank`, `first_join_ip`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						"INSERT INTO `DataUser` (`name`, `uuid`, `first_joined`, `last_joined`, `playtime`, `total_donations`, `mobs_killed`, `blocks_broken`, `blocks_placed`, `players_killed`, `deaths`, `fac1_active_trail`, `fac1_tnt_bank`, `fac1_rank`, `first_join_ip`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				ps.setString(1, name);
 				ps.setString(2, uuid);
 				ps.setDate(3, new Date(System.currentTimeMillis()));
@@ -70,8 +72,9 @@ public class LoadDataUserTask extends BukkitRunnable {
 				ps.setInt(10, 0);
 				ps.setInt(11, 0);
 				ps.setString(12, "");
-				ps.setString(13, "DEFAULT");
-				ps.setString(14, ip);
+				ps.setInt(13, 0);
+				ps.setString(14, "DEFAULT");
+				ps.setString(15, ip);
 				ps.execute();
 			}
 			resultSet.close();

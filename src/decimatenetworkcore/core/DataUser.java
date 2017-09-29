@@ -28,6 +28,7 @@ public class DataUser {
 	private int deaths;
 	private String fac1_active_trail;
 	private String fac1_rank;
+	private int fac1_tnt;
 	private String first_join_ip;
 	
 	private long start;
@@ -123,6 +124,10 @@ public class DataUser {
 		this.last_joined = date;
 	}
 	
+	public int getFac1TNT(){
+		return this.fac1_tnt;
+	}
+	
 	public long getPlaytime(){
 		return playtime + (System.currentTimeMillis() - start);
 	}
@@ -201,6 +206,18 @@ public class DataUser {
 	
 	public void setFirstJoinIP(String ip){
 		this.first_join_ip = ip;
+	}
+	
+	public void setFac1TNT(int tnt){
+		this.fac1_tnt = tnt;
+	}
+	
+	public void addFac1TNT(int tnt){
+		this.fac1_tnt += tnt;
+	}
+	
+	public void removeFac1TNT(int tnt){
+		addFac1TNT(-1*tnt);
 	}
 
 	private void loadPunishments() {
