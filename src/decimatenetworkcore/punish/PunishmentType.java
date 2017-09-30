@@ -4,7 +4,7 @@ import org.bukkit.Material;
 
 public enum PunishmentType {
 
-	MUTE("muted", Material.BOOK), BAN("banned", Material.IRON_SWORD);
+	MUTE("muted", Material.BOOK), BAN("banned", Material.IRON_SWORD), IPBAN("blacklisted", Material.PUMPKIN);
 
 	private String action;
 	private Material block;

@@ -11,8 +11,9 @@ public class PingDatabaseTask extends BukkitRunnable {
 		try {
 			DecimateNetworkCore.getInstance().getConnection()
 					.prepareStatement("/* ping */ SELECT 1 FROM `NetworkPunishments`");
+			DecimateNetworkCore.getInstance().getConnection()
+			.prepareStatement("/* ping */ SELECT 1 FROM `DataUser`");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
